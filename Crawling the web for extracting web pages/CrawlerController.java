@@ -11,7 +11,7 @@ public class CrawlerController {
 		// TODO Auto-generated method stub
 		CrawlConfig config = new CrawlConfig();
 		CrawlerHandler state = new CrawlerHandler();
-		String StorageFolder = "/Users/shru/Desktop/IRassignment/IRAssignmentcrawler/data/crawl";
+		String StorageFolder = "path to crawl folder";
 		int numberofCrawlers = 8;
 		config.setCrawlStorageFolder(StorageFolder);
 		config.setMaxDepthOfCrawling(16);
