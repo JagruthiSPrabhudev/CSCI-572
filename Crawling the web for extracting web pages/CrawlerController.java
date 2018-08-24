@@ -11,7 +11,7 @@ public class CrawlerController {
 		// TODO Auto-generated method stub
 		CrawlConfig config = new CrawlConfig();
 		CrawlerHandler state = new CrawlerHandler();
-		String StorageFolder = "/Users/shru/Desktop/IRassignment/IRAssignmentcrawler/data/crawl";
+		String StorageFolder = "/path_to_crawl/crawl";
 		int numberofCrawlers = 8;
 		config.setCrawlStorageFolder(StorageFolder);
 		config.setMaxDepthOfCrawling(16);
@@ -22,7 +22,7 @@ public class CrawlerController {
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer); 
-		controller.addSeed("https://www.c-span.org/");
+		controller.addSeed("website to be crawled");
         controller.start(MyCrawler.class, numberofCrawlers);
         List<Object> crawlerdata=controller.getCrawlersLocalData();
         for (Object localData : crawlerdata) {
@@ -74,8 +74,8 @@ public class CrawlerController {
 		int failedUrlsCount = 0;
 	    int abortedUrlsCount = 0;
 		FileWriter writer = new FileWriter("CrawlReport_C-Span.txt");
-		writer.append("Name: Shruti Nair\nUSC ID: 2985688787\n");
-		writer.append("News site crawled: c-span.org\n\n");
+		writer.append("");
+		writer.append("Web site crawled:");
 		writer.append("Fetch Statistics\n================\n");
         writer.append("# fetches attempted: " + state.attemptUrls.size() + "\n");
         writer.append("# fetches succeeded: " + state.visitedUrls.size() + "\n");
