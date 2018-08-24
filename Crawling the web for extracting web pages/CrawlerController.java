@@ -11,7 +11,7 @@ public class CrawlerController {
 		// TODO Auto-generated method stub
 		CrawlConfig config = new CrawlConfig();
 		CrawlerHandler state = new CrawlerHandler();
-		String StorageFolder = "/path_to_crawl/crawl";
+		String StorageFolder = "/Users/shru/Desktop/IRassignment/IRAssignmentcrawler/data/crawl";
 		int numberofCrawlers = 8;
 		config.setCrawlStorageFolder(StorageFolder);
 		config.setMaxDepthOfCrawling(16);
@@ -22,12 +22,12 @@ public class CrawlerController {
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer); 
-		controller.addSeed("website to be crawled");
+		controller.addSeed("https://www.chicagotribune.org/");
         controller.start(MyCrawler.class, numberofCrawlers);
         List<Object> crawlerdata=controller.getCrawlersLocalData();
         for (Object localData : crawlerdata) {
         	CrawlerHandler crawlerstate = (CrawlerHandler) localData;
-            state.attemptUrls.addAll(crawlerstate.attemptUrls);
+            state.attemptedUrls.addAll(crawlerstate.attemptedUrls);
             state.visitedUrls.addAll(crawlerstate.visitedUrls);
             state.discoveredUrls.addAll(crawlerstate.discoveredUrls);  
         }
@@ -38,10 +38,10 @@ public class CrawlerController {
 	}
 	
 	public static void fetchcsv(CrawlerHandler state) throws Exception{
-		FileWriter writer = new FileWriter("fetch_c-span.csv");
+		FileWriter writer = new FileWriter("fetch_ChicagoTribune.csv");
 		writer.append("URL,HTTP STATUS CODE");
 		writer.append('\n');
-		for (UrlInfo info : state.attemptUrls) {
+		for (URLInfo info : state.attemptedUrls) {
             writer.append(info.url + "," + info.statusCode + "\n");
         }
 		writer.flush();
@@ -49,9 +49,9 @@ public class CrawlerController {
     }
 	
 	public static void visitcsv(CrawlerHandler state) throws Exception{
-		FileWriter writer = new FileWriter("visit_c-span.csv");
+		FileWriter writer = new FileWriter("visit_ChicagoTribune.csv");
 		writer.append("URL,Size of Dowloaded File in Bytes,# of OutLinks,Content Type\n");
-		for (UrlInfo info : state.visitedUrls) {
+		for (URLInfo info : state.visitedUrls) {
             if (info.type != "unknown") {
                 writer.append(info.url + "," + info.size + "," + info.outgoingUrls.size() + "," + info.type + "\n");
             }
@@ -61,9 +61,9 @@ public class CrawlerController {
     }
 	
 	public static void urlscsv(CrawlerHandler state) throws Exception{
-		FileWriter writer = new FileWriter("urls_c-span.csv");
+		FileWriter writer = new FileWriter("urls_ChicagoTribune.csv");
 		writer.append("URL,Validity\n");
-		for (UrlInfo info : state.discoveredUrls) {
+		for (URLInfo info : state.discoveredUrls) {
             writer.append(info.url + "," + info.type + "\n");
         }
 		writer.flush();
@@ -73,14 +73,13 @@ public class CrawlerController {
 	public static void statsfile(CrawlerHandler state) throws Exception{
 		int failedUrlsCount = 0;
 	    int abortedUrlsCount = 0;
-		FileWriter writer = new FileWriter("CrawlReport_C-Span.txt");
-		writer.append("");
-		writer.append("Web site crawled:");
+		FileWriter writer = new FileWriter("CrawlReport_ChicagoTribune.txt");
+		writer.append("News site crawled: ChicagoTribune\n\n");
 		writer.append("Fetch Statistics\n================\n");
-        writer.append("# fetches attempted: " + state.attemptUrls.size() + "\n");
+        writer.append("# fetches attempted: " + state.attemptedUrls.size() + "\n");
         writer.append("# fetches succeeded: " + state.visitedUrls.size() + "\n");
        
-        for (UrlInfo info : state.attemptUrls) {
+        for (URLInfo info : state.attemptedUrls) {
             if (info.statusCode >= 300 && info.statusCode < 400) {
                 abortedUrlsCount++;
             } else if (info.statusCode != 200) { //error ??
@@ -96,7 +95,7 @@ public class CrawlerController {
         int outUrls = 0;
         writer.append("Outgoing URLs\n==============\n");
         writer.append("Total URLs extracted: " + state.discoveredUrls.size() + "\n");
-        for (UrlInfo info : state.discoveredUrls) {
+        for (URLInfo info : state.discoveredUrls) {
             if (!hashSet.contains(info.url)) {
                 hashSet.add(info.url);
                 uniqueUrls++;
@@ -115,7 +114,7 @@ public class CrawlerController {
         // Status Code
         writer.append("Status Codes:\n=============\n");
         HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
-        for (UrlInfo info : state.attemptUrls) {
+        for (URLInfo info : state.attemptedUrls) {
             if (hashMap.containsKey(info.statusCode)) {
                 hashMap.put(info.statusCode, hashMap.get(info.statusCode) + 1);
             } else {
@@ -143,7 +142,7 @@ public class CrawlerController {
         int hundredK = 0;
         int oneM = 0;
         int other = 0;
-        for (UrlInfo info : state.visitedUrls) {
+        for (URLInfo info : state.visitedUrls) {
             if (info.size < 1024) {
                 oneK++;
             } else if (info.size < 10240) {
@@ -166,7 +165,7 @@ public class CrawlerController {
      // Content Types
         HashMap<String, Integer> hashMap1 = new HashMap<String, Integer>();
         writer.append("Content Types:\n==============\n");
-        for (UrlInfo info : state.visitedUrls) {
+        for (URLInfo info : state.visitedUrls) {
             /*if (info.type.equals("unknown")) {
                 continue;
             }*/
